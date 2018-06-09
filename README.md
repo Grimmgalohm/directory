@@ -1,6 +1,6 @@
 # Directory CLI
 ## ¿Qué debes hacer?
-1. Clona este repositorio `git clone https://github.com/CodeRoomMX/coffee-shop-cli.git`.
+1. Clona este repositorio `git clone https://github.com/CodeRoomMX/directory.git`.
 
 2. Crea tu propio repositorio en Github.
 
