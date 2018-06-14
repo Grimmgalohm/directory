@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const DirectorySchema = mongoose.Schema({
-  name: {type: String, required: true},
-  apellido1: {type: String, required: true},
+  nombre: {type: String, required: true},
+  apellido1: {type: String},
   apellido2: {type: String},
   email: {type: String},
   password: {type: String, required: true},
