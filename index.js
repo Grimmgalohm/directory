@@ -16,8 +16,12 @@ mongoose.connect('mongodb://localhost/directory-cats-test')
       {type:'input', name:'apellido1', message:'Apellido materno: '},
       {type:'input', name:'apellido2', message:'Apellido paterno: '},
       {type:'input', name:'email', message:'E-mail: '},
-      {type:'password',name:'password',message:'Please create your password:', validate:llenar},
-      {type:'password',name:'confirmPassword',message:'Please confirm your password:',validate: confirmPassword},
+      {type:'password',name:'password',message:'Please create your password:', validate:llenar, mask: function(input) {
+        return '█' + new Array(String(input).length).join('█');
+      }},
+      {type:'password',name:'confirmPassword',message:'Please confirm your password:',validate: confirmPassword, mask: function(input) {
+        return '█' + new Array(String(input).length).join('█');
+      }},
       {type:'input', name:'celphone', message:'Número celular: '},
       {type:'input', name:'home', message:'Número de casa: '},
       {type:'input', name:'work', message:'Número de trabajo: '},
@@ -26,7 +30,9 @@ mongoose.connect('mongodb://localhost/directory-cats-test')
 
     const loginquestions = [
     {type:'input', name:'email', message:'Ingresa tu email: '},
-    {type:'password', name:'password', message:'Ingrese su password: '}
+    {type:'password', name:'password', message:'Ingrese su password: ', mask: function(input) {
+      return '█' + new Array(String(input).length).join('█');
+    }}
     ];
     
     var response;
@@ -44,25 +50,28 @@ mongoose.connect('mongodb://localhost/directory-cats-test')
     cmd
     .command('crear')
     .action(function(){
-      inquirer.prompt(questions).then(function(answers){
-        var hashedpassword;
-          bcrypt.hash(answers.password, 8).then(hash =>{
-            hashedpassword=hash;
-          })
-        directorio.create({
-          nombre:answers.name,
-          apellido1:answers.apellido1,
-          apellido2:answers.apellido2,
-          email:answers.email,
-          password:answers.password,
-          celphone:answers.celphone,
-          home:answers.home,
-          work:answers.work,
-          emergency:answers.emergency
-        }).then(function(){
-          console.log('Genial, hemos guardado tus contactos :D'.blue.bold);
-          mongoose.disconnect();
+      let _answers;
+      inquirer.prompt(questions)
+      .then(function(answers){
+        _answers=answers;
+        return bcrypt.hash(answers.password, 8);
+      })
+      .then(hashedPassword =>{
+        return directorio.create({
+          nombre:_answers.name,
+          apellido1:_answers.apellido1,
+          apellido2:_answers.apellido2,
+          email:_answers.email,
+          password:hashedPassword,
+          celphone:_answers.celphone,
+          home:_answers.home,
+          work:_answers.work,
+          emergency:_answers.emergency
         });
+      })
+      .then(function(){
+        console.log('Genial, hemos guardado tus contactos :D'.blue.bold);
+        mongoose.disconnect();
       });
     });
 
@@ -102,15 +111,9 @@ mongoose.connect('mongodb://localhost/directory-cats-test')
     cmd
     .command('login')
     .action(function(){
-
       inquirer.prompt(loginquestions)
-
-      .then(function(answers){
-        var data;
-
-        data = directorio.findOne({email:answers.email});
-        data.then()
-
+      .then(function(){
+        mongoose.disconnect();
       })
     })
 
