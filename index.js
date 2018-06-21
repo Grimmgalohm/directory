@@ -111,9 +111,31 @@ mongoose.connect('mongodb://localhost/directory-cats-test')
     cmd
     .command('login')
     .action(function(){
+      var _answers;
+
       inquirer.prompt(loginquestions)
-      .then(function(){
-        mongoose.disconnect();
+      
+      .then(function(answers){
+        _answers=answers;
+        return directorio.findOne({name:answers.name});
+      })
+      .then(user => {
+        if(!user){
+          mongoose.disconnect();
+          console.log('Nope :v');
+
+          return
+        }
+        res=bcrypt.compare(_answers.password, user.password);
+        return res;
+      })
+        .then(res => {
+          if(res === true){
+            console.log('date :v');
+          }else{
+            console.log('Nope');
+          }
+          mongoose.disconnect();
       })
     })
 
